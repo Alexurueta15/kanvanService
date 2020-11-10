@@ -2,7 +2,6 @@ import mongoose, { Document } from "mongoose";
 import { DeveloperService } from "./Services/DeveloperService";
 import chalk from "chalk";
 import DeveloperModel from "./Models/DeveloperModel";
-import { DeveloperBean } from "./Beans/DeveloperBean";
 
 const MONGO_URI = 'mongodb://localhost/kanban'
 const log = console.log;
@@ -24,7 +23,8 @@ mongoose.connect(MONGO_URI, {
         apellidoPaterno: "urueta",
         apellidoMaterno: "Caballero"
     }
-    await developerService.save(developer);
+
+    await developerService.save(new DeveloperModel(developer));
 
     log(chalk.red.bold("CONSULTAR"));
     var listaDevelopers: Document[] = await developerService.getAll();
@@ -44,7 +44,7 @@ mongoose.connect(MONGO_URI, {
         apellidoPaterno: "flores",
         apellidoMaterno: "montes de oca"
     }
-    await developerService.save(developer2);
+    await developerService.save(new DeveloperModel(developer2));
     var listaDevelopers = await developerService.getAll();
     listaDevelopers.forEach((e: Document) => log(e.get("nombre")));
     log(chalk.green.bold("BORRAR uno"));

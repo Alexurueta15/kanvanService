@@ -34,7 +34,7 @@ mongoose_1.default.connect(MONGO_URI, {
         apellidoPaterno: "urueta",
         apellidoMaterno: "Caballero"
     };
-    yield developerService.save(developer);
+    yield developerService.save(new DeveloperModel_1.default(developer));
     log(chalk_1.default.red.bold("CONSULTAR"));
     var listaDevelopers = yield developerService.getAll();
     listaDevelopers.forEach((e) => log(e.get("nombre")));
@@ -52,7 +52,7 @@ mongoose_1.default.connect(MONGO_URI, {
         apellidoPaterno: "flores",
         apellidoMaterno: "montes de oca"
     };
-    yield developerService.save(developer2);
+    yield developerService.save(new DeveloperModel_1.default(developer2));
     var listaDevelopers = yield developerService.getAll();
     listaDevelopers.forEach((e) => log(e.get("nombre")));
     log(chalk_1.default.green.bold("BORRAR uno"));

@@ -16,20 +16,19 @@ exports.DeveloperService = void 0;
 const DeveloperModel_1 = __importDefault(require("../Models/DeveloperModel"));
 class DeveloperService {
     save(developer) {
+        var developer;
         return __awaiter(this, void 0, void 0, function* () {
-            var developerDocument = new DeveloperModel_1.default(developer);
-            const clave = (developerDocument.get("nombre")[0] + developerDocument.get("apellidoPaterno")[0] + developerDocument.get("apellidoMaterno")[0]).toUpperCase();
-            developerDocument.set("clave", clave);
-            var developerDocument = new DeveloperModel_1.default(developerDocument);
-            yield developerDocument.save();
-            return developerDocument.toObject();
+            const clave = (developer.get("nombre")[0] + developer.get("apellidoPaterno")[0] + developer.get("apellidoMaterno")[0]).toUpperCase();
+            developer.set("clave", clave);
+            developer = new DeveloperModel_1.default(developer);
+            yield developer.save();
+            return developer.toObject();
         });
     }
     update(developer) {
         return __awaiter(this, void 0, void 0, function* () {
             const clave = (developer.get("nombre")[0] + developer.get("apellidoPaterno")[0] + developer.get("apellidoMaterno")[0]).toUpperCase();
             developer.set("clave", clave);
-            console.log("lo que se actualiza: " + developer);
             developer.save();
             return developer.toObject();
         });
