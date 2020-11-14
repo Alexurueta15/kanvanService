@@ -1,25 +1,23 @@
-import { ProductBacklogBean } from "../Beans/ProductBacklogBean";
-import { ProyectoBean } from "../Beans/ProyectoBean";
-import ProductBacklogModel from "../Models/ProductBacklogModel";
+import { getModelForClass } from "@typegoose/typegoose";
+import { ProductBacklog } from "../Beans/ProductBacklog";
+import { Proyecto } from "../Beans/Proyecto";
 import { ProyectoService } from "./ProyectoService";
 
 export class ProductBacklogService {
 
-    public async save(productBacklog: any): Promise<ProductBacklogBean> {
-        productBacklog.estatus = "Pendiente";
-        var productBacklogDao = new ProductBacklogModel(productBacklog);
-        await productBacklogDao.save();
-        return productBacklogDao.toJSON();
+    private static productBacklogModel = getModelForClass(ProductBacklog)
+
+    public static async save(productBacklog: ProductBacklog): Promise<ProductBacklog> {
+        return this.productBacklogModel.create(productBacklog);
     }
 
-    public async update(productBacklog: ProductBacklogBean): Promise<ProductBacklogBean> {
-        var productBacklogDao = new ProductBacklogModel(productBacklog);
-        await productBacklogDao.save();
+    public static async update(productBacklog: ProductBacklog): Promise<ProductBacklog> {
+        await this.save(productBacklog);
         var estatusProyecto: string;
         var estatusProyectoTerminado: boolean = false;
         var estatusProyectoSeleccionado: boolean = false;
         var estatusProyectoProceso: boolean = false;
-        const productBacklogList: ProductBacklogBean[] = await this.getAllByFilter({ claveProyecto: productBacklog.getClaveProyecto()});
+        const productBacklogList: ProductBacklog[] = await this.getAllByFilter({ claveProyecto: productBacklog.});
         productBacklogList.forEach(e => {
             if (e.getEstatus() != "Terminado") {
                 estatusProyectoTerminado = false;
@@ -49,25 +47,25 @@ export class ProductBacklogService {
             }
         }
         var proyectoService = new ProyectoService();
-        var proyecto: ProyectoBean = await proyectoService.getOne(productBacklog.getClaveProyecto());
+        var proyecto: Proyecto = await proyectoService.getOne(productBacklog.getClaveProyecto());
         proyecto.setEstatus(estatusProyecto);
         await proyectoService.save(proyecto);
         return productBacklogDao.toJSON();
     }
 
-    public async getAllByFilter(filter: Object): Promise<ProductBacklogBean[]> {
-        return JSON.parse((await ProductBacklogModel.find(filter).lean().exec()).toString());
+    public static async getAllByFilter(claveProyecto: string): Promise<ProductBacklog[]> {
+        return await this.productBacklogModel.find({claveProyecto}).exec();
     }
 
-    public async getAll(): Promise<ProductBacklogBean[]> {
-        return JSON.parse((await ProductBacklogModel.find().lean().exec()).toString());
+    public static async getAll(): Promise<ProductBacklog[]> {
+        return await this.productBacklogModel.find().exec();
        }
 
-    public async getOne(clave: string): Promise<ProductBacklogBean> {
-        return await ProductBacklogModel.findOne({ _clave: clave }).exec().then(d=>d?.toJSON());
+    public static async getOne(claveProyecto: string): Promise<ProductBacklog | null> {
+        return await this.productBacklogModel.findOne({claveProyecto}).exec();
     }
 
-    public async deleteOne(clave: string): Promise<ProductBacklogBean> {
-        return await ProductBacklogModel.deleteOne({ _clave: clave }).lean().exec().then(d=>d?.toJSON());
+    public static async deleteOne(claveProyecto: string): Promise<void> {
+         await this.productBacklogModel.deleteOne({claveProyecto}).exec();
     }
 } 

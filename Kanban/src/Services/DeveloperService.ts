@@ -1,31 +1,28 @@
-import DeveloperModel from "../Models/DeveloperModel";
-import { Document } from "mongoose";
-export class DeveloperService {
+import { getModelForClass, ReturnModelType } from "@typegoose/typegoose";
+import { Developer } from "../Beans/Developer";
+export default class DeveloperService {
 
-    public async save(developer: Document): Promise<Document> {
-        const clave = (developer.get("nombre")[0] + developer.get("apellidoPaterno")[0] + developer.get("apellidoMaterno")[0]).toUpperCase();
-        developer.set("clave", clave);
-        var developer = new DeveloperModel(developer);
-        await developer.save();
-        return developer.toObject();
+    private static developerModel = getModelForClass(Developer)
+
+    public static async save(developer: Developer): Promise<Developer> {
+        const clave = (developer.nombre[0] + developer.apellidoPaterno[0] + developer.apellidoMaterno[0]);
+        developer.clave = clave;
+        return DeveloperService.developerModel.create(developer);
     }
 
-    public async update(developer: Document): Promise<Document> {
-        const clave = (developer.get("nombre")[0] + developer.get("apellidoPaterno")[0] + developer.get("apellidoMaterno")[0]).toUpperCase();
-        developer.set("clave", clave);
-        developer.save();
-        return developer.toObject();
+    public static async update(developer: Developer): Promise<Developer> {
+        return this.save(developer);
     }
 
-    public async getAll(): Promise<Document[]> {
-        return await DeveloperModel.find().exec();
+    public static async getAll(): Promise<Developer[]> {
+        return DeveloperService.developerModel.find().exec();
     }
 
-    public async getOne(clave: string): Promise<Document | null> {
-        return await DeveloperModel.findOne({ clave: clave }).exec();
+    public static async getOne(clave: string): Promise<Developer | null> {
+        return DeveloperService.developerModel.findOne({ clave }).exec();
     }
 
-    public async deleteOne(clave: string): Promise<void> {
-        await DeveloperModel.deleteOne({ clave: clave }).exec();
+    public static async delete(clave: string): Promise<void> {
+        DeveloperService.developerModel.deleteOne({ clave }).exec();
     }
 } 

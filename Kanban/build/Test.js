@@ -13,97 +13,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const DeveloperService_1 = require("./Services/DeveloperService");
+const DeveloperService_1 = __importDefault(require("./Services/DeveloperService"));
 const chalk_1 = __importDefault(require("chalk"));
-const DeveloperModel_1 = __importDefault(require("./Models/DeveloperModel"));
+const DeveloperBean_1 = require("./Beans/DeveloperBean");
+const typegoose_1 = require("@typegoose/typegoose");
 const MONGO_URI = 'mongodb://localhost/kanban';
 const log = console.log;
 //conexion a mongodb
 mongoose_1.default.set("useFindAndModify", true);
-mongoose_1.default.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useCreateIndex: true
-}).then(() => __awaiter(void 0, void 0, void 0, function* () {
+mongoose_1.default.connect(MONGO_URI, { useNewUrlParser: true, useCreateIndex: true }).then(() => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("conectado a la bd");
     //---------------------test de CRUD para developers
-    var developerService = new DeveloperService_1.DeveloperService();
-    yield DeveloperModel_1.default.deleteMany({ clave: "OUC" });
-    yield DeveloperModel_1.default.deleteMany({ clave: "DFM" });
+    const log = console.log;
+    const developerModel = typegoose_1.getModelForClass(DeveloperBean_1.DeveloperBean);
     log(chalk_1.default.blue.bold("GUARDAR"));
-    const developer = {
-        nombre: "Oscar",
-        apellidoPaterno: "urueta",
-        apellidoMaterno: "Caballero"
-    };
-    yield developerService.save(new DeveloperModel_1.default(developer));
+    var developer = new DeveloperBean_1.DeveloperBean();
+    developer.nombre = "oscar alexis";
+    developer.apellidoPaterno = "urueta";
+    developer.apellidoMaterno = "Caballero";
+    yield DeveloperService_1.default.save(developer);
     log(chalk_1.default.red.bold("CONSULTAR"));
-    var listaDevelopers = yield developerService.getAll();
-    listaDevelopers.forEach((e) => log(e.get("nombre")));
+    var listaDevelopers = yield DeveloperService_1.default.getAll();
+    listaDevelopers.forEach(e => log(e));
     log(chalk_1.default.red.bold("GET ONE"));
-    log(yield developerService.getOne("OUC"));
+    log(yield DeveloperService_1.default.getOne("OUC"));
     log(chalk_1.default.blue.bold("actualizar 7u7"));
-    var developerToUpdate = yield developerService.getOne("OUC");
+    var developerToUpdate = yield DeveloperService_1.default.getOne("OUC");
     if (developerToUpdate) {
-        developerToUpdate.set("nombre", "estefano");
-        yield developerService.update(developerToUpdate);
+        developerToUpdate.nombre = "estefano";
+        yield DeveloperService_1.default.update(developerToUpdate);
     }
     log(chalk_1.default.blue.bold("GUARDAR otro registro"));
-    const developer2 = {
-        nombre: "Diego",
-        apellidoPaterno: "flores",
-        apellidoMaterno: "montes de oca"
-    };
-    yield developerService.save(new DeveloperModel_1.default(developer2));
-    var listaDevelopers = yield developerService.getAll();
-    listaDevelopers.forEach((e) => log(e.get("nombre")));
+    var developer = new DeveloperBean_1.DeveloperBean();
+    developer.nombre = "diego";
+    developer.apellidoPaterno = "flores";
+    developer.apellidoMaterno = "montes";
+    yield DeveloperService_1.default.save(developer);
+    var listaDevelopers = yield DeveloperService_1.default.getAll();
+    listaDevelopers.forEach((e) => log(e.nombre));
     log(chalk_1.default.green.bold("BORRAR uno"));
-    yield developerService.deleteOne("DFM");
-    var listaDevelopers = yield developerService.getAll();
-    listaDevelopers.forEach(e => log(e));
-    //---------------------test de CRUD para proyectos
-    /*
-    var proyectoService: ProyectoService = new ProyectoService();
-    log(chalk.blue.bold("GUARDAR PROYECTO"));
-    var proyecto: ProyectoBean = new ProyectoBean();
-    proyecto.clave = "DSIC";
-    proyecto.nombre = "desarrollo de sistema de control";
-    proyecto.fechaInicio = new Date("07/11/2020");
-    proyecto.fechaFinal = new Date("07/01/2021");
-    await proyectoService.save(proyecto);
-    var listaProyectos = await proyectoService.getAll();
-    listaProyectos.forEach(e => log(e));
-
-    //---------------------test de CRUD para scrum team
-
-    log(chalk.blue.bold("GUARDAR SCRUM TEAM DEVELOP"));
-    var scrumTeamService: ScrumTeamService = new ScrumTeamService();
-    scrumTeamService.deleteOne("DSIC")
-    var scrumTeam = new ScrumteamBean();
-    scrumTeam.claveProyecto = "DSIC";
-    scrumTeam.clave = "DINAMITA";
-    scrumTeam.integrantes = [listaDevelopers[0]];
-    await scrumTeamService.save(scrumTeam);
-    var listaScrumTeams = await scrumTeamService.getAll();
-    listaScrumTeams.forEach(e => log(e));
-
-    //---------------------test de CRUD para product backlog
-    log(chalk.blue.bold("GUARDAR PRODUCT BACKLOG"));
-    var productBacklogService: ProductBacklogService = new ProductBacklogService();
-    var productBacklog = new ProductBacklogBean()
-    productBacklog.claveProyecto = "DSIC";
-    productBacklog.claveScrumDeveloper = "AVRR";
-    productBacklog.funcionalidad = "desarrollar pantallas de inicio de sesión";
-    productBacklog.funcionalidad = "Alta";
-    await productBacklogService.save(productBacklog);
-    var listaProductsBacklogs = await productBacklogService.getAll();
-    listaProductsBacklogs.forEach(e => log(e));
-    log(chalk.red.bold("actualizando PRODUCT BACKLOG"));
-
-    var docPorActualizar: ProductBacklogBean = listaProductsBacklogs[0];
-    docPorActualizar.estatus = "Terminado";
-    await productBacklogService.save(docPorActualizar);
-    log(chalk.blue.bold("CONSULTA DE CAMBIO DE PROYECTO ESTATUS"));
-    var listaProyectos = await proyectoService.getAll();
-    listaProyectos.forEach(e => log(e));
-
-    */
+    yield DeveloperService_1.default.delete("DFM");
+    var listaDevelopers = yield DeveloperService_1.default.getAll();
+    listaDevelopers.forEach(e => log("nombre: " + e.nombre + " apellido: " + e.apellidoPaterno));
 }));

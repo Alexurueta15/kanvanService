@@ -1,4 +1,5 @@
-import { ProyectoBean } from "../Beans/ProyectoBean";
+/**
+ * import { ProyectoBean } from "../Beans/ProyectoBean";
 import ProyectoModel from "../Models/ProyectoModel";
 
 export class ProyectoService {
@@ -25,3 +26,4 @@ export class ProyectoService {
         return await ProyectoModel.deleteOne({ _clave: clave }).lean().exec().then(d=>d?.toJSON());
     }
 } 
+ */

@@ -1,4 +1,5 @@
-import { ScrumteamBean } from "../Beans/ScrumTeamBean";
+/**
+ * import { ScrumteamBean } from "../Beans/ScrumTeamBean";
 import ScrumTeamModel from "../Models/ScrumTeamModel";
 
 export class ScrumTeamService {
@@ -25,3 +26,4 @@ export class ScrumTeamService {
         return await ScrumTeamModel.deleteOne({ _clave: clave }).lean().exec().then(d=>d?.toJSON());
     }
 } 
+ */

@@ -4,13 +4,14 @@
   "description": "aplicación para la gestión de un tablero kanban y proyectos con metodología Scrum",
   "main": "index.js",
   "scripts": {
-    "ts": "tsc -w",
-    "start": "tsc"
+    "tsc": "tsc -w"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "^5.10.13",
+    "@typegoose/typegoose": "^7.4.2",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.14",
     "typescript": "^4.0.5"
   },
   "devDependencies": {
