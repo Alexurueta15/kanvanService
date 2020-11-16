@@ -1,71 +1,79 @@
 import { getModelForClass } from "@typegoose/typegoose";
+import { Developer } from "../Beans/Developer";
 import { ProductBacklog } from "../Beans/ProductBacklog";
 import { Proyecto } from "../Beans/Proyecto";
-import { ProyectoService } from "./ProyectoService";
+import Utilities from "../utils/Utilities";
+import ProyectoService from "./ProyectoService";
 
-export class ProductBacklogService {
+export default class ProductBacklogService {
 
-    private static productBacklogModel = getModelForClass(ProductBacklog)
+    private static productBacklogModel = getModelForClass(ProductBacklog);
 
     public static async save(productBacklog: ProductBacklog): Promise<ProductBacklog> {
-        return this.productBacklogModel.create(productBacklog);
+        productBacklog.clave = Utilities.getInitials(productBacklog.funcionalidad);
+        const newProductBacklog: ProductBacklog= await this.productBacklogModel.create(productBacklog);
+        this.changeStatus(newProductBacklog);
+        return newProductBacklog;
     }
 
     public static async update(productBacklog: ProductBacklog): Promise<ProductBacklog> {
-        await this.save(productBacklog);
-        var estatusProyecto: string;
-        var estatusProyectoTerminado: boolean = false;
-        var estatusProyectoSeleccionado: boolean = false;
-        var estatusProyectoProceso: boolean = false;
-        const productBacklogList: ProductBacklog[] = await this.getAllByFilter({ claveProyecto: productBacklog.});
-        productBacklogList.forEach(e => {
-            if (e.getEstatus() != "Terminado") {
-                estatusProyectoTerminado = false;
-            }
-        });
-        if (estatusProyectoTerminado) {
-            estatusProyecto = "Terminado";
-        } else {
-            productBacklogList.forEach(e => {
-                if (e.getEstatus() == "Proceso") {
-                    estatusProyectoProceso = true;
-                }
-            });
-            if (estatusProyectoProceso) {
-                estatusProyecto = "Proceso";
-            } else {
-                productBacklogList.forEach(e => {
-                    if (e.getEstatus() != null) {
-                        estatusProyectoSeleccionado = true;
-                    }
-                });
-                if (estatusProyectoSeleccionado) {
-                    estatusProyecto = "Seleccionado";
-                } else {
-                    estatusProyecto = "Pendiente";
-                }
-            }
-        }
-        var proyectoService = new ProyectoService();
-        var proyecto: Proyecto = await proyectoService.getOne(productBacklog.getClaveProyecto());
-        proyecto.setEstatus(estatusProyecto);
-        await proyectoService.save(proyecto);
-        return productBacklogDao.toJSON();
+        const claveAnterior: string = productBacklog.clave;
+        productBacklog.clave = Utilities.getInitials(productBacklog.funcionalidad);
+        await this.productBacklogModel.updateOne({ clave: claveAnterior }, productBacklog).exec();
+        await ProductBacklogService.changeStatus(productBacklog);
+        return productBacklog;
     }
 
-    public static async getAllByFilter(claveProyecto: string): Promise<ProductBacklog[]> {
-        return await this.productBacklogModel.find({claveProyecto}).exec();
+    public static async getAllByProyecto(proyecto: Proyecto): Promise<ProductBacklog[]> {
+        return await this.productBacklogModel.find({ proyecto: proyecto }).exec();
     }
 
     public static async getAll(): Promise<ProductBacklog[]> {
-        return await this.productBacklogModel.find().exec();
-       }
-
-    public static async getOne(claveProyecto: string): Promise<ProductBacklog | null> {
-        return await this.productBacklogModel.findOne({claveProyecto}).exec();
+        return await this.productBacklogModel.find()
+            .populate({ path: "proyecto", model: getModelForClass(Proyecto) })
+            .populate({ path: "developer", model: getModelForClass(Developer) })
+            .exec();
     }
 
-    public static async deleteOne(claveProyecto: string): Promise<void> {
-         await this.productBacklogModel.deleteOne({claveProyecto}).exec();
+    public static async getOne(clave: string): Promise<ProductBacklog | null> {
+        return await this.productBacklogModel.findOne({ clave })
+            .populate({ path: "proyecto", model: getModelForClass(Proyecto) })
+            .populate({ path: "developer", model: getModelForClass(Developer) })
+            .exec();
+    }
+
+    public static async deleteOne(clave: string): Promise<void> {
+        const productBacklog: ProductBacklog | null = await this.getOne(clave);
+        if (productBacklog) {
+            await this.productBacklogModel.deleteOne({ clave }).exec();
+            await this.changeStatus(productBacklog);
+        }
+
+    }
+
+    private static async changeStatus(productBacklog: ProductBacklog) {
+        var estatusProyecto: string;
+        const productBacklogList: ProductBacklog[] = await this.getAllByProyecto(productBacklog.proyecto);
+        if (productBacklogList.length > 0) {
+            const terminados: ProductBacklog[] = productBacklogList.filter((e: ProductBacklog) => e.estatus == "Terminado");
+            const enProceso: ProductBacklog[] = productBacklogList.filter((e: ProductBacklog) => e.estatus == "Proceso");
+            const seleccionados: ProductBacklog[] = productBacklogList.filter((e: ProductBacklog) => e.estatus == "Seleccionado");
+            if (terminados.length == productBacklogList.length) {
+                estatusProyecto = "Terminado";
+            } else if (enProceso.length > 0) {
+                estatusProyecto = "Proceso";
+            } else if (seleccionados.length > 0) {
+                estatusProyecto = "Seleccionado";
+            } else {
+                estatusProyecto = "Pendiente";
+            }
+        } else {
+            estatusProyecto = "Pendiente";
+        }
+        var proyecto: Proyecto | null = await ProyectoService.getOne(productBacklog.proyecto.clave);
+        if (proyecto) {
+            proyecto.estatus = estatusProyecto;
+            await ProyectoService.update(proyecto);
+        }
     }
 } 

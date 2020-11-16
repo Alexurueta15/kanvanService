@@ -1,0 +1,20 @@
+export default class Utilities{
+    public static getInitials(string: String) {
+        if (string == null || string == undefined || string == "" || string == " ") {
+            return "";
+        }
+        var initials: string = "";
+        const blankSpace = " ";
+        const words: string[] = string.split(blankSpace);
+        if (words.length < 3) {
+            if (words.length < 2) {
+                initials = words[0].charAt(0) + words[0].charAt(Math.trunc(words[0].length / 2)) + words[0].charAt(words[0].length - 1);
+            } else {
+                initials = words[0].charAt(0) + words[0].charAt(words[0].length - 1) + words[1].charAt(0);
+            }
+        } else {
+            initials = words.reduce((acum, word) => acum.concat(word.charAt(0)), "").toString();
+        }
+        return initials;
+    }
+}

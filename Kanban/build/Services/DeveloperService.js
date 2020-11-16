@@ -8,37 +8,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const typegoose_1 = require("@typegoose/typegoose");
-const DeveloperBean_1 = require("../Beans/DeveloperBean");
+const Developer_1 = require("../Beans/Developer");
+const Utilities_1 = __importDefault(require("../utils/Utilities"));
 class DeveloperService {
     static save(developer) {
         return __awaiter(this, void 0, void 0, function* () {
-            const clave = (developer.nombre[0] + developer.apellidoPaterno[0] + developer.apellidoMaterno[0]);
-            developer.clave = clave;
-            return DeveloperService.developerModel.create(developer);
+            const fullName = developer.nombre + " " + developer.apellidoPaterno + " " + developer.apellidoMaterno;
+            developer.clave = Utilities_1.default.getInitials(fullName);
+            return yield this.developerModel.create(developer);
         });
     }
     static update(developer) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.save(developer);
+            const claveAnterior = developer.clave;
+            const fullName = developer.nombre + developer.apellidoPaterno + developer.apellidoMaterno;
+            developer.clave = Utilities_1.default.getInitials(fullName);
+            return yield this.developerModel.updateOne({ clave: claveAnterior }, developer);
         });
     }
     static getAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            return DeveloperService.developerModel.find().exec();
+            return yield this.developerModel.find().exec();
         });
     }
     static getOne(clave) {
         return __awaiter(this, void 0, void 0, function* () {
-            return DeveloperService.developerModel.findOne({ clave }).exec();
+            return yield this.developerModel.findOne({ clave }).exec();
         });
     }
     static delete(clave) {
         return __awaiter(this, void 0, void 0, function* () {
-            DeveloperService.developerModel.deleteOne({ clave }).exec();
+            yield this.developerModel.deleteOne({ clave }).exec();
         });
     }
 }
 exports.default = DeveloperService;
-DeveloperService.developerModel = typegoose_1.getModelForClass(DeveloperBean_1.DeveloperBean);
+DeveloperService.developerModel = typegoose_1.getModelForClass(Developer_1.Developer);

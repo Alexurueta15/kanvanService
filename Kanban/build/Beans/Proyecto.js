@@ -9,24 +9,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeveloperBean = void 0;
+exports.Proyecto = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
-class DeveloperBean {
+class Proyecto {
 }
+__decorate([
+    typegoose_1.Prop({ default: typegoose_1.mongoose.Types.ObjectId() }),
+    __metadata("design:type", typegoose_1.mongoose.Types.ObjectId)
+], Proyecto.prototype, "_id", void 0);
 __decorate([
     typegoose_1.Prop({ uppercase: true }),
     __metadata("design:type", String)
-], DeveloperBean.prototype, "clave", void 0);
+], Proyecto.prototype, "clave", void 0);
 __decorate([
     typegoose_1.Prop(),
     __metadata("design:type", String)
-], DeveloperBean.prototype, "nombre", void 0);
+], Proyecto.prototype, "nombre", void 0);
 __decorate([
     typegoose_1.Prop(),
     __metadata("design:type", String)
-], DeveloperBean.prototype, "apellidoMaterno", void 0);
+], Proyecto.prototype, "fechaInicio", void 0);
 __decorate([
     typegoose_1.Prop(),
     __metadata("design:type", String)
-], DeveloperBean.prototype, "apellidoPaterno", void 0);
-exports.DeveloperBean = DeveloperBean;
+], Proyecto.prototype, "fechaFinal", void 0);
+__decorate([
+    typegoose_1.Prop({ default: "Pendiente" }),
+    __metadata("design:type", String)
+], Proyecto.prototype, "estatus", void 0);
+__decorate([
+    typegoose_1.Prop({ default: Date.now().toString() }),
+    __metadata("design:type", String)
+], Proyecto.prototype, "fechaEstatus", void 0);
+exports.Proyecto = Proyecto;

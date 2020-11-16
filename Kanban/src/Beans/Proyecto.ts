@@ -1,24 +1,27 @@
-import { Prop } from "@typegoose/typegoose";
+import { mongoose, Prop } from "@typegoose/typegoose";
 
 export class Proyecto {
 
-    @Prop()
-    private clave!: string;
+    @Prop({default: mongoose.Types.ObjectId()})
+    public _id!: mongoose.Types.ObjectId;
+
+    @Prop({ uppercase: true })
+    public clave!: string;
 
     @Prop()
-    private nombre!: string;
+    public nombre!: string;
 
     @Prop()
-    private fechaInicio!: Date;
+    public fechaInicio!: string;
 
     @Prop()
-    private fechaFinal!: Date;
+    public fechaFinal!: string;
 
-    @Prop({default: "Pendiente"})
-    private estatus!: string;
+    @Prop({ default: "Pendiente" })
+    public estatus!: string;
 
-    @Prop({default: Date.now()})
-    private fechaEstatus!: string;
+    @Prop({ default: Date.now().toString() })
+    public fechaEstatus!: string;
 
 
 }

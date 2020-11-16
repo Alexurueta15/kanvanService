@@ -1,29 +1,38 @@
-/**
- * import { ProyectoBean } from "../Beans/ProyectoBean";
-import ProyectoModel from "../Models/ProyectoModel";
+import { getModelForClass } from "@typegoose/typegoose";
+import { Proyecto } from "../Beans/Proyecto";
+import { Scrumteam } from "../Beans/ScrumTeam";
+import Utilities from "../utils/Utilities";
+import { ScrumTeamService } from "./ScrumteamServices";
 
-export class ProyectoService {
+export default class ProyectoService {
 
-    public async save(proyecto: ProyectoBean): Promise<ProyectoBean> {
-        var proyectoDao = new ProyectoModel(proyecto);
-        await proyectoDao.save();
-        return proyectoDao.toJSON();
+    private static proyectoModel = getModelForClass(Proyecto);
+
+    public static async save(proyecto: Proyecto): Promise<Proyecto> {
+        proyecto.clave = Utilities.getInitials(proyecto.nombre);
+        return await this.proyectoModel.create(proyecto);
     }
 
-    public async update(proyecto: ProyectoBean): Promise<ProyectoBean> {
-        return await this.save(proyecto);
+    public static async update(proyecto: Proyecto): Promise<Proyecto> {
+        const claveAnterior: string = proyecto.clave;
+        proyecto.clave = Utilities.getInitials(proyecto.nombre);
+        var scrumTeamtoUpdate: Scrumteam | null = await ScrumTeamService.getOne("SC-" + claveAnterior);
+        await this.proyectoModel.updateOne({ clave: claveAnterior }, proyecto).exec();
+        if (scrumTeamtoUpdate) {
+            await ScrumTeamService.update(scrumTeamtoUpdate);
+        }
+        return proyecto;
     }
 
-    public async getAll(): Promise<ProyectoBean[]> {
-        return JSON.parse((await ProyectoModel.find().lean().exec()).toString());
-       }
-
-    public async getOne(clave: string): Promise<ProyectoBean> {
-        return await ProyectoModel.findOne({ _clave: clave }).exec().then(d=>d?.toJSON());
+    public static async getAll(): Promise<Proyecto[]> {
+        return await this.proyectoModel.find().exec();
     }
 
-    public async deleteOne(clave: string): Promise<ProyectoBean> {
-        return await ProyectoModel.deleteOne({ _clave: clave }).lean().exec().then(d=>d?.toJSON());
+    public static async getOne(clave: string): Promise<Proyecto | null> {
+        return await this.proyectoModel.findOne({ clave: clave }).exec();
+    }
+
+    public static async deleteOne(clave: string): Promise<void> {
+        await this.proyectoModel.deleteOne({ clave: clave }).exec();
     }
 } 
- */

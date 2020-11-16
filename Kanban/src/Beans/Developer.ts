@@ -1,6 +1,9 @@
-import { Prop } from "@typegoose/typegoose";
+import { mongoose, Prop } from "@typegoose/typegoose";
 
 export class Developer {
+
+    @Prop({default: mongoose.Types.ObjectId()})
+    public _id!: mongoose.Types.ObjectId;
 
     @Prop({ uppercase: true })
     public clave!: string;
@@ -13,6 +16,9 @@ export class Developer {
 
     @Prop()
     public apellidoPaterno!: string;
+
+    @Prop()
+    public rol!: string;
 }
 
 
