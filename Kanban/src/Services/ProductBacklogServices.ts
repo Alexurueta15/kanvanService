@@ -11,7 +11,10 @@ export default class ProductBacklogService {
 
     public static async save(productBacklog: ProductBacklog): Promise<ProductBacklog> {
         productBacklog.clave = Utilities.getInitials(productBacklog.funcionalidad);
-        const newProductBacklog: ProductBacklog= await this.productBacklogModel.create(productBacklog);
+        if (productBacklog.developer != null || productBacklog.developer != undefined) {
+            productBacklog.estatus = "Seleccionado";
+        }
+        const newProductBacklog: ProductBacklog = await this.productBacklogModel.create(productBacklog);
         this.changeStatus(newProductBacklog);
         return newProductBacklog;
     }
@@ -19,6 +22,9 @@ export default class ProductBacklogService {
     public static async update(productBacklog: ProductBacklog): Promise<ProductBacklog> {
         const claveAnterior: string = productBacklog.clave;
         productBacklog.clave = Utilities.getInitials(productBacklog.funcionalidad);
+        if (productBacklog.developer != null || productBacklog.developer != undefined && productBacklog.estatus == "Pendiente") {
+            productBacklog.estatus = "Seleccionado";
+        }
         await this.productBacklogModel.updateOne({ clave: claveAnterior }, productBacklog).exec();
         await ProductBacklogService.changeStatus(productBacklog);
         return productBacklog;
