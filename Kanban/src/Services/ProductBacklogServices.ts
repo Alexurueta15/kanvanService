@@ -15,7 +15,7 @@ export default class ProductBacklogService {
             productBacklog.estatus = "Seleccionado";
         }
         const newProductBacklog: ProductBacklog = await this.productBacklogModel.create(productBacklog);
-        this.changeStatus(newProductBacklog);
+        await this.changeStatus(newProductBacklog);
         return newProductBacklog;
     }
 
@@ -26,7 +26,7 @@ export default class ProductBacklogService {
             productBacklog.estatus = "Seleccionado";
         }
         await this.productBacklogModel.updateOne({ clave: claveAnterior }, productBacklog).exec();
-        await ProductBacklogService.changeStatus(productBacklog);
+        await this.changeStatus(productBacklog);
         return productBacklog;
     }
 
