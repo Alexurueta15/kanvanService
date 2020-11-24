@@ -57,13 +57,21 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useCreateIndex: true }).the
 
 
     // log(chalk.white.bold("--------------------------------------"));
-    // log(chalk.blue.bold("REGISTRAR PROYECTO "));
-    // var proyecto: Proyecto = new Proyecto();
-    // proyecto.nombre = "Kanban";
-    // proyecto.fechaInicio = "15/11/2020";
-    // proyecto.fechaFinal = "30/02/2021";
-    // await ProyectoService.save(proyecto);
-    // log(chalk.blue.bold("REGISTRO EXITOSO"));
+    log(chalk.blue.bold("REGISTRAR PROYECTO "));
+    var proyecto: Proyecto = new Proyecto();
+    proyecto.nombre = "Kanban";
+    proyecto.fechaInicio = "15/11/2020";
+    proyecto.fechaFinal = "30/02/2021";
+    await ProyectoService.save(proyecto);
+    log(chalk.blue.bold("REGISTRO EXITOSO"));
+
+    log(chalk.blue.bold("REGISTRAR PROYECTO "));
+    var proyecto: Proyecto = new Proyecto();
+    proyecto.nombre = "Kanban dos";
+    proyecto.fechaInicio = "16/11/2020";
+    proyecto.fechaFinal = "30/02/2021";
+    await ProyectoService.save(proyecto);
+    log(chalk.blue.bold("REGISTRO EXITOSO"));
     // log(chalk.red.bold("consultar PROYECTOS "));
     // var proyectos: Proyecto[] = await ProyectoService.getAll();
     // proyectos.forEach(e => log(e));

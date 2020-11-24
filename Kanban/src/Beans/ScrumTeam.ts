@@ -5,7 +5,7 @@ import { Proyecto } from "./Proyecto";
 @modelOptions({ schemaOptions: { toJSON: { virtuals: true }, toObject: { virtuals: true }} })
 export class Scrumteam {
 
-    @Prop({default: mongoose.Types.ObjectId()})
+    @Prop({default: mongoose.Types.ObjectId})
     public _id!: mongoose.Types.ObjectId;
 
     @Prop({ref: () => Proyecto})

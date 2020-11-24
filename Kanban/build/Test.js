@@ -13,6 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const chalk_1 = __importDefault(require("chalk"));
+const Proyecto_1 = require("./Beans/Proyecto");
+const ProyectoService_1 = __importDefault(require("./Services/ProyectoService"));
 const MONGO_URI = 'mongodb://localhost/kanban';
 const log = console.log;
 //conexion a mongodb
@@ -53,13 +56,20 @@ mongoose_1.default.connect(MONGO_URI, { useNewUrlParser: true, useCreateIndex: t
     // listaDevelopers.forEach(e => log("nombre: " + e.nombre + " apellido: " + e.apellidoPaterno));
     //---------------------test de CRUD para proyectos
     // log(chalk.white.bold("--------------------------------------"));
-    // log(chalk.blue.bold("REGISTRAR PROYECTO "));
-    // var proyecto: Proyecto = new Proyecto();
-    // proyecto.nombre = "Kanban";
-    // proyecto.fechaInicio = "15/11/2020";
-    // proyecto.fechaFinal = "30/02/2021";
-    // await ProyectoService.save(proyecto);
-    // log(chalk.blue.bold("REGISTRO EXITOSO"));
+    log(chalk_1.default.blue.bold("REGISTRAR PROYECTO "));
+    var proyecto = new Proyecto_1.Proyecto();
+    proyecto.nombre = "Kanban";
+    proyecto.fechaInicio = "15/11/2020";
+    proyecto.fechaFinal = "30/02/2021";
+    yield ProyectoService_1.default.save(proyecto);
+    log(chalk_1.default.blue.bold("REGISTRO EXITOSO"));
+    log(chalk_1.default.blue.bold("REGISTRAR PROYECTO "));
+    var proyecto = new Proyecto_1.Proyecto();
+    proyecto.nombre = "Kanban dos";
+    proyecto.fechaInicio = "16/11/2020";
+    proyecto.fechaFinal = "30/02/2021";
+    yield ProyectoService_1.default.save(proyecto);
+    log(chalk_1.default.blue.bold("REGISTRO EXITOSO"));
     // log(chalk.red.bold("consultar PROYECTOS "));
     // var proyectos: Proyecto[] = await ProyectoService.getAll();
     // proyectos.forEach(e => log(e));

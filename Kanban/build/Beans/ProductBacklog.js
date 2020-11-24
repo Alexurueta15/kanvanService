@@ -16,7 +16,7 @@ const Proyecto_1 = require("./Proyecto");
 let ProductBacklog = class ProductBacklog {
 };
 __decorate([
-    typegoose_1.Prop({ default: typegoose_1.mongoose.Types.ObjectId() }),
+    typegoose_1.Prop({ default: typegoose_1.mongoose.Types.ObjectId }),
     __metadata("design:type", typegoose_1.mongoose.Types.ObjectId)
 ], ProductBacklog.prototype, "_id", void 0);
 __decorate([

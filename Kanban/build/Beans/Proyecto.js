@@ -14,7 +14,7 @@ const typegoose_1 = require("@typegoose/typegoose");
 class Proyecto {
 }
 __decorate([
-    typegoose_1.Prop({ default: typegoose_1.mongoose.Types.ObjectId() }),
+    typegoose_1.Prop({ default: typegoose_1.mongoose.Types.ObjectId }),
     __metadata("design:type", typegoose_1.mongoose.Types.ObjectId)
 ], Proyecto.prototype, "_id", void 0);
 __decorate([

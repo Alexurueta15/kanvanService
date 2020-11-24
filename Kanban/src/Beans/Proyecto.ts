@@ -2,7 +2,7 @@ import { mongoose, Prop } from "@typegoose/typegoose";
 
 export class Proyecto {
 
-    @Prop({default: mongoose.Types.ObjectId()})
+    @Prop({default: mongoose.Types.ObjectId})
     public _id!: mongoose.Types.ObjectId;
 
     @Prop({ uppercase: true })

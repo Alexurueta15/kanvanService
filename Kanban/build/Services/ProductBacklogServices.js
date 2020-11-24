@@ -22,8 +22,11 @@ class ProductBacklogService {
     static save(productBacklog) {
         return __awaiter(this, void 0, void 0, function* () {
             productBacklog.clave = Utilities_1.default.getInitials(productBacklog.funcionalidad);
+            if (productBacklog.developer != null || productBacklog.developer != undefined) {
+                productBacklog.estatus = "Seleccionado";
+            }
             const newProductBacklog = yield this.productBacklogModel.create(productBacklog);
-            this.changeStatus(newProductBacklog);
+            yield this.changeStatus(newProductBacklog);
             return newProductBacklog;
         });
     }
@@ -31,8 +34,11 @@ class ProductBacklogService {
         return __awaiter(this, void 0, void 0, function* () {
             const claveAnterior = productBacklog.clave;
             productBacklog.clave = Utilities_1.default.getInitials(productBacklog.funcionalidad);
+            if (productBacklog.developer != null || productBacklog.developer != undefined && productBacklog.estatus == "Pendiente") {
+                productBacklog.estatus = "Seleccionado";
+            }
             yield this.productBacklogModel.updateOne({ clave: claveAnterior }, productBacklog).exec();
-            yield ProductBacklogService.changeStatus(productBacklog);
+            yield this.changeStatus(productBacklog);
             return productBacklog;
         });
     }
